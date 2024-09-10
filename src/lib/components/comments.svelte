@@ -3,21 +3,12 @@
 	import Comments from '$lib/components/comments.svelte';
 
 	export let comments: CommentType[];
-
-	const comment = comments.shift()!;
-
-	const next = comments.at(0);
-
-	const isNested = next?.parent === comment?.id;
 </script>
 
-{#if isNested}
+{#each comments as comment}
 	<Comment text={comment.text} level={comment.level} id={comment.id}>
-		<Comments {comments} />
+		{#if comment.children?.length}
+			<Comments comments={comment.children} />
+		{/if}
 	</Comment>
-{:else}
-	<Comment text={comment.text} level={comment.level} id={comment.id} />
-	{#if next}
-		<Comments {comments} />
-	{/if}
-{/if}
+{/each}

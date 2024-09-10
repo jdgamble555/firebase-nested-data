@@ -13,7 +13,7 @@ import {
     where,
     type DocumentData
 } from "firebase/firestore";
-import { getComment } from "./tools";
+import { getComment, nestedComments } from "./tools";
 import { auth, db } from "./firebase";
 import { FirebaseError } from "firebase/app";
 import { useUser } from "./use-user";
@@ -40,10 +40,13 @@ export const snapToData = (
         };
         return comment;
     }) as CommentType[];
+
+    // create children from IDs
+    const _comments = nestedComments(comments);
     if (dev) {
-        console.log(comments);
+        console.log(_comments);
     }
-    return comments;
+    return _comments;
 }
 
 export const addComment = async (event: SubmitEvent) => {

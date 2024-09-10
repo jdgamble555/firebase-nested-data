@@ -15,7 +15,8 @@ declare global {
 		parent: string,
 		level: number,
 		createdBy: string,
-		createdAt: Date
+		createdAt: Date,
+		children?: CommentType[]
 	};
 
 	namespace App {
