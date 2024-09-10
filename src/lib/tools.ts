@@ -17,5 +17,9 @@ export const getComment = (event: SubmitEvent) => {
     if (typeof parent !== 'string') {
         throw "No parent!";
     }
-    return { text, level, parent, formElement };
+
+    const _level = Number(level);
+    
+    return { text, level: _level, parent, formElement };
 };
+

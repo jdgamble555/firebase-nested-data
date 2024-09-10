@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { addComment } from '../use-comments';
+	import { addComment } from '$lib/use-comments';
 
-	export let level = 0;
-    export let parent: string | null = null;
+	export let level = 1;
+	export let parent: string | null = null;
 </script>
 
 <form on:submit={addComment}>
@@ -10,7 +10,7 @@
 		class="flex max-w-lg items-center justify-center gap-3 rounded-md border border-gray-300 p-5"
 	>
 		<input type="hidden" name="level" value={level} />
-        <input type="hidden" name="parent" value={parent} />
+		<input type="hidden" name="parent" value={parent} />
 		<input
 			type="text"
 			name="text"

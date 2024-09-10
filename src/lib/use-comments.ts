@@ -2,6 +2,7 @@ import {
     collection,
     deleteDoc,
     doc,
+    documentId,
     onSnapshot,
     orderBy,
     query,
@@ -17,6 +18,7 @@ import { auth, db } from "./firebase";
 import { FirebaseError } from "firebase/app";
 import { useUser } from "./use-user";
 import { derived, type Readable } from "svelte/store";
+import { dev } from "$app/environment";
 
 export const snapToData = (
     q: QuerySnapshot<DocumentData, DocumentData>
@@ -26,7 +28,7 @@ export const snapToData = (
     if (q.empty) {
         return [];
     }
-    return q.docs.map((doc) => {
+    const comments = q.docs.map((doc) => {
         const data = doc.data({
             serverTimestamps: 'estimate'
         });
@@ -38,6 +40,10 @@ export const snapToData = (
         };
         return comment;
     }) as CommentType[];
+    if (dev) {
+        console.log(comments);
+    }
+    return comments;
 }
 
 export const addComment = async (event: SubmitEvent) => {
@@ -55,9 +61,11 @@ export const addComment = async (event: SubmitEvent) => {
         collection(db, 'comments')
     ).id.substring(0, 5);
 
+    const new_id = parent ? `${parent}_${id}` : id;
+
     try {
         await setDoc(
-            doc(db, `comments/${id}`),
+            doc(db, `comments/${new_id}`),
             {
                 createdBy: currentUser.uid,
                 createdAt: serverTimestamp(),
@@ -106,8 +114,7 @@ export const useComments = () => {
                 query(
                     collection(db, 'comments'),
                     where('createdBy', '==', $user.uid),
-                    orderBy('createdAt'),
-                    orderBy('parent')
+                    orderBy(documentId())
                 ), (q) => set(snapToData(q))
             );
         });
