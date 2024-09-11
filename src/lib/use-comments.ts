@@ -1,9 +1,9 @@
 import {
     collection,
-    deleteDoc,
     doc,
     documentId,
     endAt,
+    getDocs,
     onSnapshot,
     orderBy,
     query,
@@ -13,6 +13,7 @@ import {
     startAt,
     Timestamp,
     where,
+    writeBatch,
     type DocumentData
 } from "firebase/firestore";
 import { getComment, nestedComments } from "./tools";
@@ -21,6 +22,13 @@ import { FirebaseError } from "firebase/app";
 import { useUser } from "./use-user";
 import { derived, type Readable } from "svelte/store";
 import { dev } from "$app/environment";
+
+// fix what's up on comments page
+// fix comments with /
+// add depth drop down, calculate level where clause
+// add up button that goes just up one parent
+// change ID to path, doc ID to small
+// possible firebase-admin ssr version?
 
 export const snapToData = (
     q: QuerySnapshot<DocumentData, DocumentData>
@@ -89,10 +97,27 @@ export const addComment = async (event: SubmitEvent) => {
 };
 
 export const deleteComment = async (id: string) => {
+
+    const childrenSnap = await getDocs(
+        query(
+            collection(db, 'comments'),
+            orderBy(documentId()),
+            startAt(id),
+            endAt(id + '~')
+        )
+    );
+
+    if (childrenSnap.empty) {
+        throw 'No ids!';
+    }
+
+    const batch = writeBatch(db);
+
     try {
-        await deleteDoc(
-            doc(db, 'comments', id)
-        );
+        childrenSnap.docs.map(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
     } catch (e) {
         if (e instanceof FirebaseError) {
             console.error(e);
@@ -102,7 +127,8 @@ export const deleteComment = async (id: string) => {
 
 
 export const useComments = (
-    term: string | null = null
+    term: string | null = null,
+    levels: number[] = []
 ) => {
 
     const user = useUser();
@@ -122,6 +148,11 @@ export const useComments = (
                 queryConstraints.push(
                     startAt(term),
                     endAt(term + '~')
+                );
+            }
+            if (levels?.length) {
+                queryConstraints.push(
+                    where('level', 'in', levels)
                 );
             }
             return onSnapshot(
