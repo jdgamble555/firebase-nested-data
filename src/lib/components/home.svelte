@@ -20,7 +20,6 @@
 				class="w-fit rounded-lg border bg-blue-600 p-3 font-semibold text-white"
 				on:click={logout}>Logout</button
 			>
-			<hr />
 			<main class="mt-5 flex w-full flex-col items-start justify-start gap-3">
 				<Input />
 				{#if !$comments?.length}
