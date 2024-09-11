@@ -3,12 +3,14 @@ import {
     deleteDoc,
     doc,
     documentId,
+    endAt,
     onSnapshot,
     orderBy,
     query,
     QuerySnapshot,
     serverTimestamp,
     setDoc,
+    startAt,
     Timestamp,
     where,
     type DocumentData
@@ -99,7 +101,9 @@ export const deleteComment = async (id: string) => {
 };
 
 
-export const useComments = () => {
+export const useComments = (
+    term: string | null = null
+) => {
 
     const user = useUser();
 
@@ -113,11 +117,19 @@ export const useComments = () => {
             if (!$user) {
                 return;
             }
+            const queryConstraints = [];
+            if (term) {
+                queryConstraints.push(
+                    startAt(term),
+                    endAt(term + '~')
+                );
+            }
             return onSnapshot(
                 query(
                     collection(db, 'comments'),
                     where('createdBy', '==', $user.uid),
-                    orderBy(documentId())
+                    orderBy(documentId()),
+                    ...queryConstraints
                 ), (q) => set(snapToData(q))
             );
         });

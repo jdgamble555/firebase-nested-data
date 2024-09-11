@@ -11,11 +11,11 @@
 	let showInput = false;
 </script>
 
-<div class="w-full border-l py-5 pl-5">
+<div class="w-full border-l pl-5">
 	<h1 class="text-sm font-semibold">Donald Duck</h1>
 	<p class="text-xs">{text}</p>
-	<div class="my-3 flex flex-col items-start gap-y-3 border-t border-gray-300">
-		<div class="items-start flex justify-start gap-3">
+	<div class="mt-3 flex flex-col items-start border-t border-gray-300">
+		<div class="mb-1 flex items-start justify-start gap-x-3">
 			<button
 				class="text-sm text-green-500 hover:underline"
 				on:click|preventDefault={() => deleteComment(id)}
@@ -28,12 +28,11 @@
 			>
 				Reply
 			</button>
+			<a class="text-sm text-green-500 hover:underline" href={`/comment/` + id}> View </a>
 		</div>
 		{#if showInput}
 			<Input {level} parent={id} on:submit={() => (showInput = !showInput)} />
 		{/if}
-		<div>
-			<slot />
-		</div>
+		<slot />
 	</div>
 </div>

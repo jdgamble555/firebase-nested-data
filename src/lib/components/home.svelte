@@ -5,9 +5,11 @@
 	import { useComments } from '$lib/use-comments';
 	import Input from './input.svelte';
 
+	export let id: string | null = null;
+
 	const user = useUser();
 
-	const comments = useComments();
+	const comments = useComments(id);
 </script>
 
 <div class="flex w-full items-center justify-center">

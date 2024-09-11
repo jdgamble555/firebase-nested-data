@@ -36,21 +36,23 @@ export const nestedComments = (comments: CommentType[]) => {
         commentMap[comment.id] = comment;
     }
 
-    // Nest comments under their parents
-    for (let i = 0; i < comments.length; i++) {
-        const comment = comments[i];
-
-        // If no parent, push it to top-level result and continue
+    // Nest comments under their parents, or handle cases where parent is missing
+    for (const comment of comments) {
+        // If the comment doesn't have a parent, add it to the top-level result immediately
         if (!comment.parent) {
             result.push(comment);
             continue;
         }
 
-        // If parent exists, add it to the parent's children array
+        // If the parent is not in the dataset, handle the child as a top-level comment (or change as needed)
         const parent = commentMap[comment.parent];
-        if (parent) {
-            parent.children!.push(comment);
+        if (!parent) {
+            result.push(comment);
+            continue;
         }
+
+        // Add the comment to the parent's children array if the parent exists
+        parent.children!.push(comment);
     }
 
     return result;

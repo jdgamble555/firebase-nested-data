@@ -6,7 +6,7 @@
 </script>
 
 <form on:submit={addComment} on:submit>
-	<header class="flex max-w-lg items-center justify-center gap-3">
+	<header class="my-3 flex max-w-lg items-center justify-center gap-3">
 		<input type="hidden" name="level" value={level} />
 		<input type="hidden" name="parent" value={parent} />
 		<input
