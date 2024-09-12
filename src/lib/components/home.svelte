@@ -4,12 +4,11 @@
 	import Comments from './comments.svelte';
 	import { useComments } from '$lib/use-comments';
 	import Input from './input.svelte';
-
-	export let id: string | null = null;
+	import { page } from '$app/stores';
 
 	const user = useUser();
 
-	const comments = useComments(id);
+	$: comments = useComments($page.data.id);
 </script>
 
 <div class="flex w-full items-center justify-center">
@@ -18,10 +17,22 @@
 			<Profile />
 			<button
 				class="w-fit rounded-lg border bg-blue-600 p-3 font-semibold text-white"
-				on:click={logout}>Logout</button
+				on:click={logout}
 			>
+				Logout
+			</button>
 			<main class="mt-5 flex w-full flex-col items-start justify-start gap-3">
-				<Input />
+				{#if $page.data.path}
+					<a
+						rel=""
+						class="rounded-lg border bg-violet-800 p-2 text-white"
+						href={'/comment/' + $page.data.parentPath}
+					>
+						UP
+					</a>
+				{:else}
+					<Input />
+				{/if}
 				{#if !$comments?.length}
 					<p>No Comments yet!</p>
 				{:else}

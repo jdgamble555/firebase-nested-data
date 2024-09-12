@@ -6,6 +6,8 @@
 	export let level = 1;
 	export let id: string;
 
+	$: idPath = id.split('_').join('/');
+
 	$: ++level;
 
 	let showInput = false;
@@ -28,7 +30,7 @@
 			>
 				Reply
 			</button>
-			<a class="text-sm text-green-500 hover:underline" href={`/comment/` + id}> View </a>
+			<a class="text-sm text-green-500 hover:underline" href={`/comment/` + idPath}> View </a>
 		</div>
 		{#if showInput}
 			<Input {level} parent={id} on:submit={() => (showInput = !showInput)} />
