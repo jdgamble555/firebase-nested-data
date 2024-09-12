@@ -5,8 +5,11 @@
 	import { useComments } from '$lib/use-comments';
 	import Input from './input.svelte';
 	import { page } from '$app/stores';
+	import { derived } from 'svelte/store';
+	import type { PageData } from '$types/routes/comment/[...id]/$types';
 
 	const user = useUser();
+	const data = derived(page, (_page) => _page.data as PageData);
 
 	$: comments = useComments($page.data.id);
 </script>
@@ -22,11 +25,11 @@
 				Logout
 			</button>
 			<main class="mt-5 flex w-full flex-col items-start justify-start gap-3">
-				{#if $page.data.path}
+				{#if $data.path}
 					<a
 						rel=""
 						class="rounded-lg border bg-violet-800 p-2 text-white"
-						href={'/comment/' + $page.data.parentPath}
+						href={'/comment/' + $data.parentPath}
 					>
 						UP
 					</a>
