@@ -7,11 +7,12 @@
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
 	import type { PageData } from '$types/routes/comment/[...id]/$types';
+	import Depth from './depth.svelte';
 
 	const user = useUser();
 	const data = derived(page, (_page) => _page.data as PageData);
 
-	$: comments = useComments($page.data.id);
+	$: comments = useComments($data.id, $data.levelArray);
 </script>
 
 <div class="flex w-full items-center justify-center">
@@ -25,6 +26,7 @@
 				Logout
 			</button>
 			<main class="mt-5 flex w-full flex-col items-start justify-start gap-3">
+				<Depth />
 				{#if $data.path}
 					<a
 						rel=""
