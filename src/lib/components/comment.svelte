@@ -14,7 +14,7 @@
 </script>
 
 <div class="w-full border-l pl-5">
-	<h1 class="text-sm font-semibold">Donald Duck</h1>
+	<h1 class="text-sm font-semibold">Susan Mouse</h1>
 	<p class="text-xs">{text}</p>
 	<div class="mt-3 flex flex-col items-start border-t border-gray-300">
 		<div class="mb-1 flex items-start justify-start gap-x-3">
