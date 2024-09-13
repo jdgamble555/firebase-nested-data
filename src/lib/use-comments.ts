@@ -49,10 +49,12 @@ export const snapToData = (
         return comment;
     }) as CommentType[];
 
+    console.log(comments);
+
     // create children from IDs
     const _comments = nestedComments(comments);
     if (dev) {
-        console.log(_comments);
+        //console.log(_comments);
     }
     return _comments;
 }
@@ -86,7 +88,8 @@ export const addComment = async (event: SubmitEvent) => {
                 text,
                 level,
                 path,
-                parent
+                parent,
+                votes: 0
             }
         );
         formElement.reset();
@@ -164,7 +167,8 @@ export const useComments = (
                 query(
                     collection(db, 'comments'),
                     where('createdBy', '==', $user.uid),
-                    orderBy('path'),
+                    orderBy('parent'),
+                    orderBy('votes', 'desc'),
                     ...queryConstraints
                 ), (q) => set(snapToData(q))
             );
