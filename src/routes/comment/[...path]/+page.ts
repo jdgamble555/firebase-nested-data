@@ -3,7 +3,7 @@ import type { PageLoad } from "./$types";
 
 export const load: PageLoad = ({ params, url }) => {
 
-    const path = params.id;
+    const path = params.path;
 
     const depth = url.searchParams.get('depth');
 
@@ -17,17 +17,15 @@ export const load: PageLoad = ({ params, url }) => {
         }
     }
 
-    const parentPath = path?.split('/').slice(0, -1).join('/');
-    const id = path?.split('/').join('_');
+    const parent = path?.split('/').slice(0, -1).join('/');
 
     if (!path) {
         return redirect(301, '/');
     }
 
     return {
-        id,
         path,
-        parentPath,
+        parent,
         levelArray
     };
 };

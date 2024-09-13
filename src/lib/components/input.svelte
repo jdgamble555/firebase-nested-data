@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { addComment } from '$lib/use-comments';
-
-	export let level = 1;
-	export let parent: string | null = null;
+	
+	export let path: string | null = null;
 </script>
 
 <form on:submit={addComment} on:submit>
 	<header class="my-3 flex max-w-lg items-center justify-center gap-3">
-		<input type="hidden" name="level" value={level} />
-		<input type="hidden" name="parent" value={parent} />
+		<input type="hidden" name="parent" value={path} />
 		<input
 			type="text"
 			name="text"

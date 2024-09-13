@@ -6,13 +6,13 @@
 	import Input from './input.svelte';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
-	import type { PageData } from '$types/routes/comment/[...id]/$types';
+	import type { PageData } from '$types/routes/comment/[...path]/$types';
 	import Depth from './depth.svelte';
 
 	const user = useUser();
 	const data = derived(page, (_page) => _page.data as PageData);
 
-	$: comments = useComments($data.id, $data.levelArray);
+	$: comments = useComments($data.path, $data.levelArray);
 </script>
 
 <div class="flex w-full items-center justify-center">
@@ -31,17 +31,20 @@
 					<a
 						rel=""
 						class="rounded-lg border bg-violet-800 p-2 text-white"
-						href={'/comment/' + $data.parentPath}
+						href={'/comment/' + $data.parent}
 					>
 						UP
 					</a>
 				{:else}
 					<Input />
 				{/if}
-				{#if !$comments?.length}
-					<p>No Comments yet!</p>
-				{:else}
+				<div class="w-full">
+					<div class="mt-3 flex flex-col items-start border-t border-gray-300"></div>
+				</div>
+				{#if $comments?.length}
 					<Comments comments={$comments} />
+				{:else}
+					<p>No Comments yet!</p>
 				{/if}
 			</main>
 		{:else}

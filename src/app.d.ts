@@ -16,6 +16,7 @@ declare global {
 		level: number,
 		createdBy: string,
 		createdAt: Date,
+		path: string,
 		children?: CommentType[]
 	};
 

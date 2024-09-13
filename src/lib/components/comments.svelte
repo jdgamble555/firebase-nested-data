@@ -6,7 +6,7 @@
 </script>
 
 {#each comments as comment}
-	<Comment text={comment.text} level={comment.level} id={comment.id}>
+	<Comment text={comment.text} path={comment.path}>
 		{#if comment.children?.length}
 			<Comments comments={comment.children} />
 		{/if}

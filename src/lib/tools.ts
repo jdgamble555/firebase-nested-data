@@ -4,23 +4,18 @@ export const getComment = (event: SubmitEvent) => {
 
     const formElement = event.target as HTMLFormElement;
 
-    const { text, level, parent } = Object.fromEntries(
+    const { text, parent } = Object.fromEntries(
         new FormData(formElement)
     );
 
     if (!text || typeof text !== 'string') {
         throw "No comment!";
     }
-    if (!level || typeof level !== 'string') {
-        throw "No level!";
-    }
     if (typeof parent !== 'string') {
         throw "No parent!";
     }
-
-    const _level = Number(level);
     
-    return { text, level: _level, parent, formElement };
+    return { text, parent, formElement };
 };
 
 
@@ -33,7 +28,7 @@ export const nestedComments = (comments: CommentType[]) => {
     for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
         comment.children = [];
-        commentMap[comment.id] = comment;
+        commentMap[comment.path] = comment;
     }
 
     // Nest comments under their parents, or handle cases where parent is missing

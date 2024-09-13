@@ -1,7 +1,6 @@
 import {
     collection,
     doc,
-    documentId,
     endAt,
     getDocs,
     onSnapshot,
@@ -24,10 +23,7 @@ import { derived, type Readable } from "svelte/store";
 import { dev } from "$app/environment";
 
 // fix what's up on comments page
-// fix comments with /
 // add depth drop down, calculate level where clause
-// add up button that goes just up one parent
-// change ID to path, doc ID to small
 // possible firebase-admin ssr version?
 
 export const snapToData = (
@@ -45,6 +41,8 @@ export const snapToData = (
         const createdAt = data['createdAt'] as Timestamp;
         const comment = {
             ...data,
+            path: data['path']?.split('_').join('/'),
+            parent: data['parent']?.split('_').join('/'),
             createdAt: createdAt.toDate(),
             id: doc.id
         };
@@ -61,7 +59,10 @@ export const snapToData = (
 
 export const addComment = async (event: SubmitEvent) => {
 
-    const { text, level, parent, formElement } = getComment(event);
+    const { text, parent, formElement } = getComment(event);
+
+    const level = parent?.split('/').length + 1 || 1;
+    const _parent = parent.split('/').join('_');
 
     const currentUser = auth.currentUser;
 
@@ -74,16 +75,17 @@ export const addComment = async (event: SubmitEvent) => {
         collection(db, 'comments')
     ).id.substring(0, 5);
 
-    const new_id = parent ? `${parent}_${id}` : id;
+    const path = parent ? `${_parent}_${id}` : id;
 
     try {
         await setDoc(
-            doc(db, `comments/${new_id}`),
+            doc(db, `comments/${id}`),
             {
                 createdBy: currentUser.uid,
                 createdAt: serverTimestamp(),
                 text,
                 level,
+                path,
                 parent
             }
         );
@@ -96,14 +98,16 @@ export const addComment = async (event: SubmitEvent) => {
     }
 };
 
-export const deleteComment = async (id: string) => {
+export const deleteComment = async (path: string) => {
+
+    const _path = path.split('/').join('_');
 
     const childrenSnap = await getDocs(
         query(
             collection(db, 'comments'),
-            orderBy(documentId()),
-            startAt(id),
-            endAt(id + '~')
+            orderBy('path'),
+            startAt(_path),
+            endAt(_path + '~')
         )
     );
 
@@ -145,9 +149,10 @@ export const useComments = (
             }
             const queryConstraints = [];
             if (term) {
+                const _term = term.split('/').join('_');
                 queryConstraints.push(
-                    startAt(term),
-                    endAt(term + '~')
+                    startAt(_term),
+                    endAt(_term + '~')
                 );
             }
             if (levels?.length) {
@@ -159,7 +164,7 @@ export const useComments = (
                 query(
                     collection(db, 'comments'),
                     where('createdBy', '==', $user.uid),
-                    orderBy(documentId()),
+                    orderBy('path'),
                     ...queryConstraints
                 ), (q) => set(snapToData(q))
             );

@@ -3,12 +3,7 @@
 	import Input from './input.svelte';
 
 	export let text: string;
-	export let level = 1;
-	export let id: string;
-
-	$: idPath = id.split('_').join('/');
-
-	$: ++level;
+	export let path: string;
 
 	let showInput = false;
 </script>
@@ -20,7 +15,7 @@
 		<div class="mb-1 flex items-start justify-start gap-x-3">
 			<button
 				class="text-sm text-green-500 hover:underline"
-				on:click|preventDefault={() => deleteComment(id)}
+				on:click|preventDefault={() => deleteComment(path)}
 			>
 				Delete
 			</button>
@@ -30,10 +25,12 @@
 			>
 				Reply
 			</button>
-			<a class="text-sm text-green-500 hover:underline" href={`/comment/` + idPath}> View </a>
+			<a class="text-sm text-green-500 hover:underline" href={`/comment/` + path}>
+				View
+			</a>
 		</div>
 		{#if showInput}
-			<Input {level} parent={id} on:submit={() => (showInput = !showInput)} />
+			<Input {path} on:submit={() => (showInput = !showInput)} />
 		{/if}
 		<slot />
 	</div>
