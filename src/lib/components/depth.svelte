@@ -11,7 +11,6 @@
 
 	const go: ChangeEventHandler<HTMLSelectElement> = async () => {
 		if (selected === 'clear') {
-			console.log('test');
 			url.searchParams.delete('depth');
 			await goto(url);
 			invalidateAll();

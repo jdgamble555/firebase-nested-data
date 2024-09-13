@@ -49,12 +49,10 @@ export const snapToData = (
         return comment;
     }) as CommentType[];
 
-    console.log(comments);
-
     // create children from IDs
     const _comments = nestedComments(comments);
     if (dev) {
-        //console.log(_comments);
+        console.log(_comments);
     }
     return _comments;
 }
