@@ -21,6 +21,7 @@ import { FirebaseError } from "firebase/app";
 import { useUser } from "./use-user";
 import { derived, type Readable } from "svelte/store";
 import { dev } from "$app/environment";
+import { startsWith } from "./firebase-helper";
 
 // fix what's up on comments page
 // add depth drop down, calculate level where clause
@@ -106,9 +107,7 @@ export const deleteComment = async (path: string) => {
     const childrenSnap = await getDocs(
         query(
             collection(db, 'comments'),
-            orderBy('path'),
-            startAt(_path),
-            endAt(_path + '~')
+            ...startsWith('path', _path)
         )
     );
 

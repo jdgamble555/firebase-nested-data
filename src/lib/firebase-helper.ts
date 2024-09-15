@@ -1,20 +1,17 @@
 import {
     endAt,
     orderBy,
-    query,
     startAt,
-    type CollectionReference
 } from "firebase/firestore";
 
-export function startsWith(
-    collectionRef: CollectionReference,
+
+export const startsWith = (
     fieldName: string,
     term: string
-) {
-    return query(
-        collectionRef,
+) => {
+    return [
         orderBy(fieldName),
         startAt(term),
         endAt(term + '~')
-    );
-}
+    ];
+};
