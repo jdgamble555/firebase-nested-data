@@ -1,7 +1,6 @@
 import {
     collection,
     doc,
-    endAt,
     getDocs,
     onSnapshot,
     orderBy,
@@ -9,7 +8,6 @@ import {
     QuerySnapshot,
     serverTimestamp,
     setDoc,
-    startAt,
     Timestamp,
     where,
     writeBatch,
@@ -60,10 +58,10 @@ export const snapToData = (
 
 export const addComment = async (event: SubmitEvent) => {
 
-    const { text, parent, formElement } = getComment(event);
+    const { text, parent: _parent, formElement } = getComment(event);
 
-    const level = parent?.split('/').length + 1 || 1;
-    const _parent = parent.split('/').join('_');
+    const level = _parent.split('/').length + 1 || 1;
+    const parent = _parent.split('/').join('_');
 
     const currentUser = auth.currentUser;
 
@@ -76,7 +74,7 @@ export const addComment = async (event: SubmitEvent) => {
         collection(db, 'comments')
     ).id.substring(0, 5);
 
-    const path = parent ? `${_parent}_${id}` : id;
+    const path = parent ? `${parent}_${id}` : id;
 
     try {
         await setDoc(
@@ -151,8 +149,8 @@ export const useComments = (
             if (term) {
                 const _term = term.split('/').join('_');
                 queryConstraints.push(
-                    startAt(_term),
-                    endAt(_term + '~')
+                    where('parent', '>=', _term),
+                    where('parent', '<=', _term + '~')
                 );
             }
             if (levels?.length) {
@@ -164,7 +162,7 @@ export const useComments = (
                 query(
                     collection(db, 'comments'),
                     where('createdBy', '==', $user.uid),
-                    orderBy('parent'),
+                    orderBy('path'),
                     orderBy('votes', 'desc'),
                     ...queryConstraints
                 ), (q) => set(snapToData(q))
