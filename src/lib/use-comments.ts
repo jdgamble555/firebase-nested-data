@@ -149,8 +149,8 @@ export const useComments = (
             if (term) {
                 const _term = term.split('/').join('_');
                 queryConstraints.push(
-                    where('parent', '>=', _term),
-                    where('parent', '<=', _term + '~')
+                    where('path', '>=', _term),
+                    where('path', '<=', _term + '~')
                 );
             }
             if (levels?.length) {
