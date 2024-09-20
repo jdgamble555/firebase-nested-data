@@ -46,6 +46,9 @@
 				{:else}
 					<p>No Comments yet!</p>
 				{/if}
+				<div class="w-full">
+					<div class="mt-3 flex flex-col items-start border-t border-gray-300"></div>
+				</div>
 			</main>
 		{:else}
 			<button class="bg-red-600 p-2 font-semibold text-white" on:click={loginWithGoogle}>
